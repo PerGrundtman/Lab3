@@ -1,7 +1,7 @@
 /* Globals */
 var inputAddress;
 var inputPassword;
-
+var inputDestination;
 
 var buttonInvite;
 var buttonAccept;
@@ -27,7 +27,7 @@ function SIP_Communicator() {
   this.user_Agent = document.getElementById('user_Agent');
   this.remoteVideo = document.getElementById('remoteVideo');
   this.localVideo = document.getElementById('localVideo');
-  this.inputAddress = document.getElementById('inputAddress');
+  this.inputDestination = document.getElementById('inputDestination');
   this.buttonInvite = document.getElementById('buttonInvite');
   this.buttonInvite.addEventListener('click', this.sendInvite.bind(this), false);
 
@@ -107,7 +107,7 @@ SIP_Communicator.prototype = {
   },
 
   sendInvite: function(){
-    var dest = this.inputAddress.value;
+    var dest = this.inputDestination.value;
     if(!dest) { 
       return;
        }
