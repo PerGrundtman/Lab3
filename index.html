@@ -35,13 +35,8 @@
         button:disabled{
             background-color: dimgray;
         }
-
-        #serverIP{
-            margin: 2px;
-            margin-left: 0;
-            background-color: aliceblue;
-            border: none;
-        }
+		
+		
 
         video {
             background-color: gainsboro;
@@ -78,28 +73,11 @@
         
         <button id="buttonAccept" disabled> Accept </button><br>
         <button id="buttonReject" disabled> Reject </button><br> <!--TODO-->
-        <button id="buttonTerminate"> Terminate </button>
+        <button id="buttonTerminate"> Hangup </button>
     </div>
 
     <script src="sip-0.6.4.min.js"></script>
     <script src="main.js"></script>
-    <!--
-    <br>
 
-    <input type="text" id="serverIP" value="ws://localhost:3434">
-    <br>
-
-    <button id="ipButton" onclick="setIP()">Set server IP</button>
-    <br>
-
-    <button id="startButton" onclick="start()" disabled>Start camera</button>
-    <br>
-
-    <button id="callButton" onclick="call()" disabled>Call</button>
-	<br>
-	
-	<button id="hangupButton" onClick="hangup()" disabled>Hangup</button>
-	-->
-	
 </body>
 </html>
