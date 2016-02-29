@@ -1,7 +1,7 @@
 /* Globals */
 var inputAddress;
 var inputPassword;
-var inputAddress;
+
 
 var buttonInvite;
 var buttonAccept;
@@ -9,6 +9,7 @@ var buttonTerminate;
 var buttonReject; //TODO
 
 var formID;
+var ua;
 var user_Agent;
 var localVideo; //TODO
 var remoteVideo;
@@ -18,8 +19,8 @@ function SIP_Communicator() {
   this.inputAddress = document.getElementById('inputAddress');
   this.inputPassword = document.getElementById('inputPassword');
   this.formID = document.getElementById('formID');
-  this.formID.addEventListener('submit', function(event){
-    event.preventDefault();
+  this.formID.addEventListener('submit', function(e){
+    e.preventDefault();
     this.requestCredentials();
   }.bind(this), false);  //testa att köra requestCredentials i onClick och rensa här
 
@@ -45,8 +46,8 @@ SIP_Communicator.prototype = {
   */
   requestCredentials: function() {
     var httpRequest = new XMLHttpRequest();
-    httpRequest.onload = this.setCredentials.bind(true);
-    xhr.open('get', 'https://api.onsip.com/api/?Action=UserRead&Output=json');
+    httpRequest.onload = this.setCredentials.bind(this);
+    httpRequest.open('get', 'https://api.onsip.com/api/?Action=UserRead&Output=json');
 
     var userPW = this.inputAddress.value + ':' + this.inputPassword.value;
     httpRequest.setRequestHeader('Authorization', 'Basic' + btoa(userPW));
@@ -61,7 +62,7 @@ SIP_Communicator.prototype = {
     if(httpRequest.status === 200) {
       user = JSON.parse(httpRequest.responseText).Response.Result.UserRead.User;
       credentials = {
-        uri: this.addressInput.value,
+        uri: this.inputAddress.value,
         authorizationUser: user.AuthUsername,
         password: user.Password,
         displayName: user.Contact.Name
@@ -75,7 +76,89 @@ SIP_Communicator.prototype = {
   },
 
   createUA: function (credentials) {
-    this.identityForm.style.display = 'none';
-  }
+    this.formID.style.display = 'none';
+    this.user_Agent.style.display = 'block';
+    this.ua = new SIP.UA(credentials);
+    this.ua.on('invite', this.handleInvite.bind(this));
+  },
+  handleInvite: function (session) {
+    if(this.session){
+      session.reject();
+      return;  //TODO
+    }
+    this.setSession(session); 
+    this.setStatus('Ring Ring! ' + session.remoteIdentity.uri.toString() + ' is calling!', true);
+    this.buttonAccept.disabled = false;
+  },
 
-}
+  acceptSession: function() {
+    if(!this.session) { 
+      return; 
+    }
+    this.buttonAccept.disabled=true;//TODO downlight button
+    
+    this.session.accept(this.remoteVideo);
+  },
+
+  sendInvite: function(){
+    var dest = this.inputAddress.value;
+    if(!dest) { 
+      return;
+       }
+
+       var session = this.ua.invite(dest, this.remoteVideo);
+
+       this.setSession(session);
+       this.buttonInvite.disabled = true;//TODO downlight button
+  },
+  /*
+    handling of all status cases
+  */
+  setSession: function(session){
+    session.on('progress', function(){
+      this.setStatus('progress', true);
+    }.bind(this));
+
+    session.on('accepted', function() {
+      this.setStatus('accepted', true);
+    }.bind(this));
+
+    session.on('failed', function () {
+      this.setStatus('failed', false);
+      if (session === this.session) {
+        delete this.session;
+      }
+    }.bind(this));
+
+      session.on('bye', function () {
+      this.setStatus('bye', false);
+    
+      if (session === this.session) {
+        delete this.session;
+      }
+    }.bind(this));
+
+      session.on('refer', session.followRefer(function (req, newSession) {
+      this.setStatus('refer', true);
+      this.setSession(newSession);
+    }.bind(this)));
+
+    this.session = session;
+  },
+
+  setStatus: function (status, disable) {
+    this.user_Agent.className = status;
+    this.buttonInvite.disabled = disable;
+    this.buttonTerminate.disabled = !disable;
+  },
+
+  terminateSession: function() {
+    if(!this.session) {
+      return;
+    }
+    this.session.terminate();
+  },
+
+
+};
+var SIP_Communicator = new SIP_Communicator();
