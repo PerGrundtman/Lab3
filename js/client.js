@@ -74,6 +74,9 @@ function call(){
     peerConnection.addStream(localStream);
 
     peerConnection.createOffer(gotDescription, logError);
+	
+	hangupButton = document.getElementById('hangupButton'); //enable hangup
+	hangupButton.disabled = false;
 }
 
 
@@ -82,6 +85,20 @@ function recieveCall(){
     peerConnection.onicecandidate = gotIceCandidate;
     peerConnection.onaddstream = gotRemoteStream;
     peerConnection.addStream(localStream);
+}
+
+function hangup(){
+	peerConnection.close();
+	peerConnection = null;
+	
+	ipButton.disabled = 
+	startButton.disabled = 
+	callButton.disabled = 
+	hangupButton.disabled = 
+}
+
+function reset(){
+	
 }
 
 //Handle incoming SDP and ICE signaling messages

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>M7017E:Lab1</title>
+    <title>M7017E:Lab3</title>
 
     <style>
         h1{
@@ -58,11 +58,32 @@
 </head>
 <body bgcolor="#5f9ea0">
     <div id="pane">
-    <h1>M7017E Lab 2: One-to-one video conference</h1>
+    <h1>M7017E Lab 3: One-to-one SIP Communicator</h1>
     <h2>By Anders and Per</h2></div>
 
-    <video id="localVid" autoplay muted></video>
-    <video id="remoteVid" autoplay></video>
+    <form id = "formID">
+        <label> SIP Address <input type="text" id ="inputAddress" value="name@domain.blabla" autofocus onclick="this.select()"/></label>
+        <br>
+        <label> PassWord <input type ="password" id="inputPassword"/></label>
+        <br>
+        <button id="auth-button"> Confirm identity </button>
+    </form>
+
+    <div id ="user_Agent" style="display: none">
+        <label> SIP Address </label> <input type="text" id="inputDestination"/></label>
+        <br>
+        <button id="buttonInvite"> Invite Session </button><br>
+        <video id="localVideo" autoplay muted></video>
+        <video id="remoteVideo"></video><br>
+        
+        <button id="buttonAccept" disabled> Accept </button><br>
+        <button id="buttonReject" disabled> Reject </button><br> <!--TODO-->
+        <button id="buttonTerminate"> Terminate </button>
+    </div>
+
+    <script src="sip-0.6.4.min.js"></script>
+    <script src="main.js"></script>
+    <!--
     <br>
 
     <input type="text" id="serverIP" value="ws://localhost:3434">
@@ -75,5 +96,10 @@
     <br>
 
     <button id="callButton" onclick="call()" disabled>Call</button>
+	<br>
+	
+	<button id="hangupButton" onClick="hangup()" disabled>Hangup</button>
+	-->
+	
 </body>
 </html>
