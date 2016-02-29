@@ -49,8 +49,11 @@ SIP_Communicator.prototype = {
     httpRequest.onload = this.setCredentials.bind(this);
     httpRequest.open('get', 'https://api.onsip.com/api/?Action=UserRead&Output=json');
 
+
     var userPW = this.inputAddress.value + ':' + this.inputPassword.value;
-    httpRequest.setRequestHeader('Authorization', 'Basic' + btoa(userPW));
+   
+    httpRequest.setRequestHeader('Authorization',
+                         'Basic ' + btoa(userPW));
     httpRequest.send();
   },
 
@@ -80,10 +83,13 @@ SIP_Communicator.prototype = {
     this.user_Agent.style.display = 'block';
     this.ua = new SIP.UA(credentials);
     this.ua.on('invite', this.handleInvite.bind(this));
+
   },
   handleInvite: function (session) {
+
     if(this.session){
       session.reject();
+      alert('FUCK');
       return;  //TODO
     }
     this.setSession(session); 
