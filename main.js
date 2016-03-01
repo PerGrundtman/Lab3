@@ -1,7 +1,10 @@
 /* Globals */
 var isCalling;
 var hungUp;
-
+var constraints = {
+    audio: true,
+    video: true
+};
 
 var inputAddress;
 var inputPassword;
@@ -70,6 +73,25 @@ function beep() {
     snd.play();
 }
 
+//-------------localVIDEO-----------------------------
+function init(){
+      if(navigator.getUserMedia){
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(onMediaSuccess)
+            .catch(function(error){
+                console.error(error);
+            })
+    } else {
+        alert("This browser doesn't support the getUserMedia API.");
+  }
+}
+
+function onMediaSuccess(stream){
+    localStream = stream;
+    localVid.src = window.URL.createObjectURL(stream);
+}
+//-----------------localVIDEO----------------------------
+
 SIP_Communicator.prototype = {
   /* 
   code to allow for authentication, using the onsip API.
@@ -80,6 +102,9 @@ SIP_Communicator.prototype = {
     this.user_Agent.style.display = 'block';
     this.ua = new SIP.UA(credentials);
     this.ua.on('invite', this.handleInvite.bind(this));
+
+    
+
 
   },
 
@@ -118,6 +143,7 @@ SIP_Communicator.prototype = {
   },
 
     sendInvite: function(){
+
     var dest = this.inputDestination.value;
     if(!dest) { 
       return;
@@ -157,7 +183,7 @@ SIP_Communicator.prototype = {
 
     audioRing.pause();
     this.session.accept(this.remoteVideo);
-
+    
     
     audioPickup.play();
 
