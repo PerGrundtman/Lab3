@@ -73,24 +73,6 @@ function beep() {
     snd.play();
 }
 
-//-------------localVIDEO-----------------------------
-function init(){
-      if(navigator.getUserMedia){
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(onMediaSuccess)
-            .catch(function(error){
-                console.error(error);
-            })
-    } else {
-        alert("This browser doesn't support the getUserMedia API.");
-  }
-}
-
-function onMediaSuccess(stream){
-    localStream = stream;
-    localVid.src = window.URL.createObjectURL(stream);
-}
-//-----------------localVIDEO----------------------------
 
 SIP_Communicator.prototype = {
   /* 
@@ -160,13 +142,13 @@ SIP_Communicator.prototype = {
     if(this.session){
       //session.reject();
       
-      return;  //TODO
+      return;  
     }
     this.setSession(session); 
     var caller = session.remoteIdentity.uri.toString();
     this.setStatus('Ring Ring! ' + caller + ' is calling!', true);
     
-   // alert(caller+" is calling"); //works
+   // alert(caller+" is calling"); //debug
     this.buttonAccept.disabled = false;
 	  this.buttonReject.disabled = false;
  
@@ -220,8 +202,6 @@ SIP_Communicator.prototype = {
     this.session.terminate();
   },
 
-
-  
   /*
     handling of all cases of events
   */
@@ -234,12 +214,11 @@ SIP_Communicator.prototype = {
       this.setStatus('accepted', true);
     }.bind(this));
 
-
     session.on('failed', function (request) {
       //var cause = request.cause;  //sometimes this is request.reason_phrase
       var cause = request.reason_phrase;
       this.setStatus('failed', false);
-      //alert("failed call cause:  " + cause);
+      alert("failed call cause:  " + cause);
       audioRing.pause();
       
       audioBusy.play();
@@ -248,7 +227,6 @@ SIP_Communicator.prototype = {
         this.ua.message(caller, 'Im unavailable'); //send to 'caller'
         alert("callee is busy 1");
       }
-
 
       if (cause === SIP.C.causes.REJECTED){
         this.ua.message(caller, 'Im unavailable'); //send to 'caller'
